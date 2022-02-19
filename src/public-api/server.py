@@ -1,8 +1,10 @@
 from flask import Flask, request
 from helpers import filters
+from helpers.kafka import KafkaHelper
 import logging
 import uuid
 import os
+import sys
 
 logging.basicConfig(level=logging.INFO)
 
@@ -39,7 +41,10 @@ def generate_qrcode():
 
   logger.debug(f'Generating QR code {request_id} with data {data}...')
 
-  return { 'status': 200, 'id': request_id, 'message': 'QR code requested successfully.' }, 200
+  payload = { 'id': str(request_id), 'data': data }
+  KafkaHelper.instance().send(kafka_topic, payload)
+
+  return { 'status': 200, 'id': str(request_id), 'message': 'QR code requested successfully.' }, 200
 
 
 @app.route('/fetch/<id>', methods=['GET'])
@@ -59,5 +64,23 @@ def get_status(id):
 if __name__ == '__main__':
   if 'DEBUG' in os.environ and os.environ.get('DEBUG') == '1':
     logger.setLevel(logging.DEBUG)
+  
+  if 'KAFKA_HOST' not in os.environ:
+    logger.error('KAFKA_HOST is not defined.')
+    sys.exit(1)
+
+  if 'KAFKA_TOPIC' not in os.environ:
+    logger.error('KAFKA_TOPIC is not defined.')
+    sys.exit(1)
+
+  if 'KAFKA_PARTITIONS' not in os.environ:
+    logger.error('KAFKA_PARTITIONS is not defined.')
+    sys.exit(1)
+
+  kafka_host = os.environ.get('KAFKA_HOST')
+  kafka_topic = os.environ.get('KAFKA_TOPIC')
+  kafka_partitions = os.environ.get('KAFKA_PARTITIONS')
+
+  KafkaHelper.instance(kafka_host).createTopic(kafka_topic, kafka_partitions)
 
   app.run(host='0.0.0.0', port=8000)
