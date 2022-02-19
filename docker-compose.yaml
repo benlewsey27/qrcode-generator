@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  public-api:
+    image: benlewsey27/qrcode-generator-public-api:0.1.0
+    container_name: qrcode-generator-public-api
+    build: src/public-api
+    environment:
+      - DEBUG=1
+    ports:
+      - 8000:8000
