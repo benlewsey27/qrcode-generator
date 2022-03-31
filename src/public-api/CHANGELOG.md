@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.3.0]
+- Added status service integration for generate and status endpoints
+
 ## [0.2.0]
 - Added kafka integration via helper class
 - Added kafka producer to send messages when a QR code is requested
