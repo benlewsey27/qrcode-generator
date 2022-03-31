@@ -1,6 +1,7 @@
-from flask import Flask, request
+from flask import Flask, request as request_data
 from helpers import filters
 from helpers.kafka import KafkaHelper
+import requests
 import logging
 import uuid
 import os
@@ -33,10 +34,10 @@ def catch(err):
 
 @app.route('/generate', methods=['POST'])
 def generate_qrcode():
-  if 'data' not in request.json or type(request.json['data']) != str:
+  if 'data' not in request_data.json or type(request_data.json['data']) != str:
     return { 'status': 400, 'message': 'data either not found in body or invalid.' }, 400
 
-  data = request.json['data']
+  data = request_data.json['data']
   request_id = uuid.uuid4()
 
   logger.debug(f'Generating QR code {request_id} with data {data}...')
@@ -44,6 +45,7 @@ def generate_qrcode():
   payload = { 'id': str(request_id), 'data': data }
   KafkaHelper.instance().send(kafka_topic, payload)
 
+  requests.post(f'{status_service_host}/update', json={ 'id': str(request_id), 'status': 'requested' })
   return { 'status': 200, 'id': str(request_id), 'message': 'QR code requested successfully.' }, 200
 
 
@@ -58,7 +60,15 @@ def fetch_qrcode(id):
 def get_status(id):
   logger.debug(f'Getting status for QR code with id {id}...')
 
-  return 'WARNING: status not implemented yet!', 200
+  response = requests.post(f'{status_service_host}/status', json={ 'id': id })
+
+  if response.status_code == 404:
+    return { 'status': 404, 'message': 'QR code not found' }, 404
+
+  data = response.json()
+  status = data['status']
+
+  return { 'id': id, 'status': status }, 200
 
 
 if __name__ == '__main__':
@@ -77,9 +87,14 @@ if __name__ == '__main__':
     logger.error('KAFKA_PARTITIONS is not defined.')
     sys.exit(1)
 
+  if 'STATUS_SERVICE_HOST' not in os.environ:
+    logger.error('STATUS_SERVICE_HOST is not defined.')
+    sys.exit(1)
+
   kafka_host = os.environ.get('KAFKA_HOST')
   kafka_topic = os.environ.get('KAFKA_TOPIC')
   kafka_partitions = os.environ.get('KAFKA_PARTITIONS')
+  status_service_host = os.environ.get('STATUS_SERVICE_HOST')
 
   KafkaHelper.instance(kafka_host).createTopic(kafka_topic, kafka_partitions)
 

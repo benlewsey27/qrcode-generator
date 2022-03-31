@@ -21,8 +21,12 @@ services:
     depends_on:
       - zookeeper
 
+  redis:
+    image: redis:6.2.6
+    container_name: redis
+
   public-api:
-    image: benlewsey27/qrcode-generator-public-api:0.2.0
+    image: benlewsey27/qrcode-generator-public-api:0.3.0
     container_name: qrcode-generator-public-api
     build: src/public-api
     environment:
@@ -30,6 +34,7 @@ services:
       - KAFKA_HOST=kafka:9092
       - KAFKA_TOPIC=qrcode-generator
       - KAFKA_PARTITIONS=4
+      - STATUS_SERVICE_HOST=http://status-service:8000
     ports:
       - 8000:8000
   
@@ -42,3 +47,12 @@ services:
       - KAFKA_HOST=kafka:9092
       - KAFKA_TOPIC=qrcode-generator
       - KAFKA_CONSUMER_GROUP=generate-service
+
+  status-service:
+    image: benlewsey27/qrcode-generator-status-service:0.1.0
+    container_name: qrcode-generator-status-service
+    build: src/status-service
+    environment:
+      - DEBUG=1
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
