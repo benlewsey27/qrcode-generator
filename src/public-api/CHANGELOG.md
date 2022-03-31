@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.4.0]
+- Use 16 character lowercase alphanumeric code for request id
+
 ## [0.3.0]
 - Added status service integration for generate and status endpoints
 

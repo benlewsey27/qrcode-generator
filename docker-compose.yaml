@@ -26,7 +26,7 @@ services:
     container_name: redis
 
   public-api:
-    image: benlewsey27/qrcode-generator-public-api:0.3.0
+    image: benlewsey27/qrcode-generator-public-api:0.4.0
     container_name: qrcode-generator-public-api
     build: src/public-api
     environment:

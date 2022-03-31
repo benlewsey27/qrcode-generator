@@ -3,7 +3,8 @@ from helpers import filters
 from helpers.kafka import KafkaHelper
 import requests
 import logging
-import uuid
+import random
+import string
 import os
 import sys
 
@@ -15,6 +16,10 @@ werkzeug.addFilter(filters.HealthFilter())
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+
+
+def generate_id():
+  return ''.join(random.choices(string.ascii_letters + string.digits, k=16)).lower()
 
 
 @app.route('/health')
@@ -38,14 +43,14 @@ def generate_qrcode():
     return { 'status': 400, 'message': 'data either not found in body or invalid.' }, 400
 
   data = request_data.json['data']
-  request_id = uuid.uuid4()
+  request_id = generate_id()
 
   logger.debug(f'Generating QR code {request_id} with data {data}...')
 
-  payload = { 'id': str(request_id), 'data': data }
+  payload = { 'id': request_id, 'data': data }
   KafkaHelper.instance().send(kafka_topic, payload)
 
-  requests.post(f'{status_service_host}/update', json={ 'id': str(request_id), 'status': 'requested' })
+  requests.post(f'{status_service_host}/update', json={ 'id': request_id, 'status': 'requested' })
   return { 'status': 200, 'id': str(request_id), 'message': 'QR code requested successfully.' }, 200
 
 
