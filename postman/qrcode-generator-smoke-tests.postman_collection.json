@@ -1,0 +1,147 @@
+{
+	"info": {
+		"_postman_id": "b98fc917-6782-4fcd-932f-ec0454c9e039",
+		"name": "qrcode-generator-smoke-tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Healthcheck",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{entrypoint-url}}/health",
+					"host": [
+						"{{entrypoint-url}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Generate QR Code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var response = JSON.parse(responseBody);",
+							"pm.environment.set(\"qrcode-id\", response.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"data\": \"https://www.bbc.co.uk\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{entrypoint-url}}/generate",
+					"host": [
+						"{{entrypoint-url}}"
+					],
+					"path": [
+						"generate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{entrypoint-url}}/status/{{qrcode-id}}",
+					"host": [
+						"{{entrypoint-url}}"
+					],
+					"path": [
+						"status",
+						"{{qrcode-id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch QR Code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type header is image/png\", function () {",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('image/png');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{entrypoint-url}}/fetch/{{qrcode-id}}",
+					"host": [
+						"{{entrypoint-url}}"
+					],
+					"path": [
+						"fetch",
+						"{{qrcode-id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
