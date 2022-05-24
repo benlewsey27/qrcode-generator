@@ -1,4 +1,4 @@
-from flask import Flask, request as request_data
+from flask import Flask, send_file, request as request_data
 from helpers import filters
 from helpers.kafka import KafkaHelper
 import requests
@@ -51,14 +51,27 @@ def generate_qrcode():
   KafkaHelper.instance().send(kafka_topic, payload)
 
   requests.post(f'{status_service_host}/update', json={ 'id': request_id, 'status': 'requested' })
-  return { 'status': 200, 'id': str(request_id), 'message': 'QR code requested successfully.' }, 200
+  return { 'status': 200, 'id': request_id, 'message': 'QR code requested successfully.' }, 200
 
 
 @app.route('/fetch/<id>', methods=['GET'])
 def fetch_qrcode(id):
   logger.debug(f'Fetching QR code with id {id}...')
 
-  return 'WARNING: fetch not implemented yet!', 200
+  response = requests.post(f'{status_service_host}/status', json={ 'id': id })
+  response_data = response.json()
+
+  if response.status_code == 404:
+    return { 'status': 404, 'message': 'QR code not found' }, 404
+
+  if response_data['status'] != 'done':
+    return { 'status': 400, 'message': 'QR code is still processing. Please try again later.' }, 400
+
+  if not os.path.exists(f'/tmp/{id}.png'):
+    logger.error(f'QR code with id {id} has finished, but file is not found!')
+    return { 'status': 500, 'message': 'Internal Server Error' }, 500
+
+  return send_file(f'/tmp/{id}.png', as_attachment=True)
 
 
 @app.route('/status/<id>', methods=['GET'])
