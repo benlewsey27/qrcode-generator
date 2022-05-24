@@ -26,7 +26,7 @@ services:
     container_name: redis
 
   public-api:
-    image: benlewsey27/qrcode-generator-public-api:0.4.0
+    image: benlewsey27/qrcode-generator-public-api:0.5.0
     container_name: qrcode-generator-public-api
     build: src/public-api
     environment:
@@ -35,11 +35,13 @@ services:
       - KAFKA_TOPIC=qrcode-generator
       - KAFKA_PARTITIONS=4
       - STATUS_SERVICE_HOST=http://status-service:8000
+    volumes:
+      - shared-content:/tmp
     ports:
       - 8000:8000
   
   generate-service:
-    image: benlewsey27/qrcode-generator-generate-service:0.1.0
+    image: benlewsey27/qrcode-generator-generate-service:0.2.0
     container_name: qrcode-generator-generate-service
     build: src/generate-service
     environment:
@@ -47,6 +49,9 @@ services:
       - KAFKA_HOST=kafka:9092
       - KAFKA_TOPIC=qrcode-generator
       - KAFKA_CONSUMER_GROUP=generate-service
+      - STATUS_SERVICE_HOST=http://status-service:8000
+    volumes:
+      - shared-content:/tmp
 
   status-service:
     image: benlewsey27/qrcode-generator-status-service:0.1.0
@@ -56,3 +61,6 @@ services:
       - DEBUG=1
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+
+volumes:
+  shared-content:
