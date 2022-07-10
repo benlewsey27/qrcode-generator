@@ -24,9 +24,10 @@ services:
   redis:
     image: redis:6.2.6
     container_name: redis
+    command: redis-server --requirepass password
 
   public-api:
-    image: benlewsey27/qrcode-generator-public-api:0.5.0
+    image: benlewsey27/qrcode-generator-public-api:${APP_VERSION}
     container_name: qrcode-generator-public-api
     build: src/public-api
     environment:
@@ -41,7 +42,7 @@ services:
       - 8000:8000
   
   generate-service:
-    image: benlewsey27/qrcode-generator-generate-service:0.2.0
+    image: benlewsey27/qrcode-generator-generate-service:${APP_VERSION}
     container_name: qrcode-generator-generate-service
     build: src/generate-service
     environment:
@@ -54,13 +55,14 @@ services:
       - shared-content:/tmp
 
   status-service:
-    image: benlewsey27/qrcode-generator-status-service:0.1.0
+    image: benlewsey27/qrcode-generator-status-service:${APP_VERSION}
     container_name: qrcode-generator-status-service
     build: src/status-service
     environment:
       - DEBUG=1
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - REDIS_PASSWORD=password
 
 volumes:
   shared-content:
