@@ -1,16 +1,19 @@
 # Deployment
 
-## Local Deployment (Docker Compose)
+## Running Locally (Docker Compose)
 
-To deploy this project using docker-compose, complete the following steps:
+To ease development, there is a `docker-compose.sh` helper script.
+
+This runs docker compose to build and deploy containers to a local docker daemon.
 
 ```bash
-docker compose build
-docker compose up
+./docker-compose.sh build <version>
+./docker-compose.sh up <version>
 
-# The app is now running on port 8000. To quit, enter Ctrl+C.
+# Application running on port 8000...
+# Type Ctrl+C to quit.
 
-docker compose down
+./docker-compose.sh down <version>
 ```
 
 ## Deployment (Helm Charts)
