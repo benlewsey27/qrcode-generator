@@ -73,9 +73,14 @@ if __name__ == '__main__':
     logger.error('REDIS_PORT is not defined.')
     sys.exit(1)
 
+  if 'REDIS_PASSWORD' not in os.environ:
+    logger.error('REDIS_PASSWORD is not defined.')
+    sys.exit(1)
+
   redis_host = os.environ.get('REDIS_HOST')
   redis_port = os.environ.get('REDIS_PORT')
+  redis_password = os.environ.get('REDIS_PASSWORD')
 
-  RedisHelper.instance(redis_host, redis_port)
+  RedisHelper.instance(redis_host, redis_port, redis_password)
 
   app.run(host='0.0.0.0', port=8000)
