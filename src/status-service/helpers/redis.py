@@ -8,12 +8,12 @@ class RedisHelper():
     raise RuntimeError('Call instance() instead')
   
   @classmethod
-  def instance(self, redis_host=None, redis_port=None):
+  def instance(self, redis_host=None, redis_port=None, redis_password=None):
     if self.__instance is None:
       self.__instance = self.__new__(self)
       while True:
         try:
-          self.connection = redis.Redis(host=redis_host, port=redis_port, db=0)
+          self.connection = redis.Redis(host=redis_host, port=redis_port, db=0, password=redis_password)
           self.expire_time = 5 * 60
           break
         except Exception:

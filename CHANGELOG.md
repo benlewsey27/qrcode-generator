@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.7.0]
+- [status-service] Added support for redis passwords
+
 ## [0.6.0]
 - [generate-service] Added initial QR code generation functionality
 - [generate-service] Added option to save QR code to local file
