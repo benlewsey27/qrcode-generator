@@ -1,0 +1,5 @@
+apiVersion: v2
+name: qrcode-generator
+description: This project provides an restful api to generate qr codes
+type: application
+version: 0.7.0

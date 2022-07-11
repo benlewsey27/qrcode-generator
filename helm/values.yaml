@@ -1,0 +1,43 @@
+storage:
+  path: /tmp/qrcode-generator
+  capacity: 8Gi
+
+publicapi:
+  env:
+    - name: DEBUG
+      value: "1"
+    - name: KAFKA_HOST
+      value: "kafka:9092"
+    - name: KAFKA_TOPIC
+      value: "qrcode-generator"
+    - name: KAFKA_PARTITIONS
+      value: "4"
+    - name: STATUS_SERVICE_HOST
+      value: "http://status-service:8000"
+
+statusservice:
+  env:
+    - name: DEBUG
+      value: "1"
+    - name: REDIS_HOST
+      value: "redis-master"
+    - name: REDIS_PORT
+      value: "6379"
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: redis
+          key: redis-password
+
+generateservice:
+  env:
+    - name: DEBUG
+      value: "1"
+    - name: KAFKA_HOST
+      value: "kafka:9092"
+    - name: KAFKA_TOPIC
+      value: "qrcode-generator"
+    - name: KAFKA_CONSUMER_GROUP
+      value: "generate-service"
+    - name: STATUS_SERVICE_HOST
+      value: "http://status-service:8000"

@@ -1,0 +1,34 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qrcode-generator-generate-service
+  labels:
+    app: qrcode-generator-generate-service
+spec:
+  replicas: {{ .Values.generateservice.replicas }}
+  selector:
+    matchLabels:
+      app: qrcode-generator-generate-service
+  template:
+    metadata:
+      labels:
+        app: qrcode-generator-generate-service
+    spec:
+      containers:
+      - name: main
+        image: {{ .Values.generateservice.image.registry }}/{{ .Values.generateservice.image.repository }}:{{ .Values.generateservice.image.tag }}
+        {{- if .Values.generateservice.env }}
+        env:
+          {{- range .Values.generateservice.env }}
+          - name: {{ .name }}
+            value: {{ .value | quote }}
+          {{- end }} 
+        {{- end }}
+        volumeMounts:
+        - mountPath: /tmp
+          name: qrcode-generator-storage
+      volumes:
+      - name: qrcode-generator-storage
+        persistentVolumeClaim:
+          claimName: qrcode-generator-shared-volume
