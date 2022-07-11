@@ -1,0 +1,50 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qrcode-generator-status-service
+  labels:
+    app: qrcode-generator-status-service
+spec:
+  replicas: {{ .Values.statusservice.replicas }}
+  selector:
+    matchLabels:
+      app: qrcode-generator-status-service
+  template:
+    metadata:
+      labels:
+        app: qrcode-generator-status-service
+    spec:
+      containers:
+      - name: main
+        image: {{ .Values.statusservice.image.registry }}/{{ .Values.statusservice.image.repository }}:{{ .Values.statusservice.image.tag }}
+        {{- if .Values.statusservice.env }}
+        env:
+          {{- range .Values.statusservice.env }}
+          {{- if not .valueFrom }}
+          - name: {{ .name }}
+            value: {{ .value | quote }}
+          {{- else }}
+          - name: {{ .name }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .valueFrom.secretKeyRef.name }}
+                key: {{ .valueFrom.secretKeyRef.key }}          
+          {{- end }}
+          {{- end }}
+        {{- end }}
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.statusservice.service.name }}
+spec:
+  type: {{ .Values.statusservice.service.type }}
+  selector:
+    app: qrcode-generator-status-service
+  ports:
+    - protocol: TCP
+      port: {{ .Values.statusservice.service.port }}
+      targetPort: 8000

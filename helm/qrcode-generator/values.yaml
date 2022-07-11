@@ -1,0 +1,32 @@
+storage:
+  path: /tmp/qrcode-generator
+  capacity: 10Gi
+
+publicapi:
+  replicas: 1
+  image:
+    registry: benlewsey27
+    repository: qrcode-generator-public-api
+    tag: 0.7.0
+  service:
+    name: public-api
+    type: NodePort
+    port: 8000
+
+statusservice:
+  replicas: 1
+  image:
+    registry: benlewsey27
+    repository: qrcode-generator-status-service
+    tag: 0.7.0
+  service:
+    name: status-service
+    type: ClusterIP
+    port: 8000
+
+generateservice:
+  replicas: 1
+  image:
+    registry: benlewsey27
+    repository: qrcode-generator-generate-service
+    tag: 0.7.0

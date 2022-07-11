@@ -1,0 +1,13 @@
+releases:
+  - name: redis
+    chart: bitnami/redis
+    version: 16.13.2
+
+  - name: kafka
+    chart: bitnami/kafka
+    version: 18.0.3
+
+  - name: qrcode-generator
+    chart: ./qrcode-generator
+    values:
+      - ./values.yaml
