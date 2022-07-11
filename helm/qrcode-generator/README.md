@@ -1,6 +1,6 @@
 # qrcode-generator
 
-![Version: 0.7.0](https://img.shields.io/badge/Version-0.7.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 1.0.0-beta](https://img.shields.io/badge/Version-1.0.0--beta-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 This project provides an restful api to generate qr codes
 
@@ -10,18 +10,18 @@ This project provides an restful api to generate qr codes
 |-----|------|---------|-------------|
 | generateservice.image.registry | string | `"benlewsey27"` |  |
 | generateservice.image.repository | string | `"qrcode-generator-generate-service"` |  |
-| generateservice.image.tag | string | `"0.7.0"` |  |
+| generateservice.image.tag | string | `"1.0.0-beta"` |  |
 | generateservice.replicas | int | `1` |  |
 | publicapi.image.registry | string | `"benlewsey27"` |  |
 | publicapi.image.repository | string | `"qrcode-generator-public-api"` |  |
-| publicapi.image.tag | string | `"0.7.0"` |  |
+| publicapi.image.tag | string | `"1.0.0-beta"` |  |
 | publicapi.replicas | int | `1` |  |
 | publicapi.service.name | string | `"public-api"` |  |
 | publicapi.service.port | int | `8000` |  |
 | publicapi.service.type | string | `"NodePort"` |  |
 | statusservice.image.registry | string | `"benlewsey27"` |  |
 | statusservice.image.repository | string | `"qrcode-generator-status-service"` |  |
-| statusservice.image.tag | string | `"0.7.0"` |  |
+| statusservice.image.tag | string | `"1.0.0-beta"` |  |
 | statusservice.replicas | int | `1` |  |
 | statusservice.service.name | string | `"status-service"` |  |
 | statusservice.service.port | int | `8000` |  |
