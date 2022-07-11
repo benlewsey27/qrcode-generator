@@ -2,7 +2,8 @@
 	"info": {
 		"_postman_id": "b98fc917-6782-4fcd-932f-ec0454c9e039",
 		"name": "qrcode-generator-smoke-tests",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8794176"
 	},
 	"item": [
 		{
@@ -47,7 +48,7 @@
 							"});",
 							"",
 							"var response = JSON.parse(responseBody);",
-							"pm.environment.set(\"qrcode-id\", response.id);"
+							"pm.collectionVariables.set(\"qrcode-id\", response.id);"
 						],
 						"type": "text/javascript"
 					}
@@ -142,6 +143,33 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "entrypoint-url",
+			"value": "localhost:8000",
+			"type": "string"
 		}
 	]
 }
