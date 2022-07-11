@@ -1,0 +1,27 @@
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: qrcode-generator-shared-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: {{ .Values.storage.capacity }}
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: {{ .Values.storage.path }}
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: qrcode-generator-shared-volume
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.storage.capacity }}

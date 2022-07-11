@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qrcode-generator-public-api
+  labels:
+    app: qrcode-generator-public-api
+spec:
+  replicas: {{ .Values.publicapi.replicas }}
+  selector:
+    matchLabels:
+      app: qrcode-generator-public-api
+  template:
+    metadata:
+      labels:
+        app: qrcode-generator-public-api
+    spec:
+      containers:
+      - name: main
+        image: {{ .Values.publicapi.image.registry }}/{{ .Values.publicapi.image.repository }}:{{ .Values.publicapi.image.tag }}
+        {{- if .Values.publicapi.env }}
+        env:
+          {{- range .Values.publicapi.env }}
+          - name: {{ .name }}
+            value: {{ .value | quote }}
+          {{- end }} 
+        {{- end }}
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - mountPath: /tmp
+          name: qrcode-generator-storage
+      volumes:
+      - name: qrcode-generator-storage
+        persistentVolumeClaim:
+          claimName: qrcode-generator-shared-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.publicapi.service.name }}
+spec:
+  type: {{ .Values.publicapi.service.type }}
+  selector:
+    app: qrcode-generator-public-api
+  ports:
+    - port: {{ .Values.publicapi.service.port }}
+      targetPort: 8000
