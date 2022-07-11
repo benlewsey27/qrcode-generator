@@ -7,7 +7,7 @@ publicapi:
   image:
     registry: benlewsey27
     repository: qrcode-generator-public-api
-    tag: 0.7.0
+    tag: 1.0.0-beta
   service:
     name: public-api
     type: NodePort
@@ -18,7 +18,7 @@ statusservice:
   image:
     registry: benlewsey27
     repository: qrcode-generator-status-service
-    tag: 0.7.0
+    tag: 1.0.0-beta
   service:
     name: status-service
     type: ClusterIP
@@ -29,4 +29,4 @@ generateservice:
   image:
     registry: benlewsey27
     repository: qrcode-generator-generate-service
-    tag: 0.7.0
+    tag: 1.0.0-beta
