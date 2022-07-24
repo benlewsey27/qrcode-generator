@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.0] - Unreleased
+- Added initial E2E tests
+
 ## [1.0.0-beta]
 **public-api**
 - Added initial generate, fetch and status endpoint structure

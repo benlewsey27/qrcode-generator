@@ -20,3 +20,4 @@ This project uses a microservice architecture and will consist of 3 services:
 
 - [API Endpoints](./docs/api-endpoints.md)
 - [Deployment](./docs/deployment.md)
+- [Testing](./docs/testing.md)
