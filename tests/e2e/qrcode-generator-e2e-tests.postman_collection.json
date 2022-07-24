@@ -1,0 +1,392 @@
+{
+	"info": {
+		"_postman_id": "f5187295-3c08-4c86-8fb4-e86362240702",
+		"name": "qrcode-generator-e2e-tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8794176"
+	},
+	"item": [
+		{
+			"name": "1. Healthcheck",
+			"item": [
+				{
+					"name": "1.1. Public API is live",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{public-api-url}}/health",
+							"host": [
+								"{{public-api-url}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.2. Route not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Body is correct\", function () {",
+									"    pm.response.to.have.body(\"Error: Route Not Found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{public-api-url}}/invalid-route",
+							"host": [
+								"{{public-api-url}}"
+							],
+							"path": [
+								"invalid-route"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.3. Invalid method",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 405\", function () {",
+									"    pm.response.to.have.status(405);",
+									"});",
+									"",
+									"pm.test(\"Body is correct\", function () {",
+									"    pm.response.to.have.body(\"Error: Invalid Method\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{public-api-url}}/health",
+							"host": [
+								"{{public-api-url}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Generating QR Codes",
+			"item": [
+				{
+					"name": "2.1. Missing body data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Checking JSON response\", function () {",
+									"    var data = pm.response.json();",
+									"    pm.expect(data.message).to.eql(\"data either not found in body or invalid.\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{public-api-url}}/generate",
+							"host": [
+								"{{public-api-url}}"
+							],
+							"path": [
+								"generate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.2. Request successful",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var response = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"qrcode-id\", response.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": \"https://www.bbc.co.uk\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{public-api-url}}/generate",
+							"host": [
+								"{{public-api-url}}"
+							],
+							"path": [
+								"generate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. QR Code Status",
+			"item": [
+				{
+					"name": "3.1. QR Code not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Checking JSON response\", function () {",
+									"    var data = pm.response.json();",
+									"    pm.expect(data.message).to.eql(\"QR code not found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{public-api-url}}/status/invalid-code",
+							"host": [
+								"{{public-api-url}}"
+							],
+							"path": [
+								"status",
+								"invalid-code"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.2. Request successful",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Checking JSON response\", function () {",
+									"    var qrcode_id = pm.collectionVariables.get(\"qrcode-id\");",
+									"    var data = pm.response.json();",
+									"",
+									"    pm.expect(data.id).to.eql(qrcode_id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{public-api-url}}/status/{{qrcode-id}}",
+							"host": [
+								"{{public-api-url}}"
+							],
+							"path": [
+								"status",
+								"{{qrcode-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Fetching QR Codes",
+			"item": [
+				{
+					"name": "4.1. QR Code not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Checking JSON response\", function () {",
+									"    var data = pm.response.json();",
+									"    pm.expect(data.message).to.eql(\"QR code not found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{public-api-url}}/fetch/invalid-code",
+							"host": [
+								"{{public-api-url}}"
+							],
+							"path": [
+								"fetch",
+								"invalid-code"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.2. Request successful",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type header is image/png\", function () {",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('image/png');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{public-api-url}}/fetch/{{qrcode-id}}",
+							"host": [
+								"{{public-api-url}}"
+							],
+							"path": [
+								"fetch",
+								"{{qrcode-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "public-api-url",
+			"value": "localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "qrcode-id",
+			"value": ""
+		}
+	]
+}
