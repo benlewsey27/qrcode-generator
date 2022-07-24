@@ -39,6 +39,9 @@ def catch(err):
 
 @app.route('/generate', methods=['POST'])
 def generate_qrcode():
+  if not request_data.json:
+    return { 'status': 400, 'message': 'request is missing a JSON body.' }, 400
+
   if 'data' not in request_data.json or type(request_data.json['data']) != str:
     return { 'status': 400, 'message': 'data either not found in body or invalid.' }, 400
 

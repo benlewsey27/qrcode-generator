@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 ## [1.0.0] - Unreleased
 - Added initial E2E tests
 
+**public-api**
+- Added safe error when generating QR codes without a JSON body
+
 ## [1.0.0-beta]
 **public-api**
 - Added initial generate, fetch and status endpoint structure
